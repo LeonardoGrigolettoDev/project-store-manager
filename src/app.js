@@ -1,6 +1,8 @@
 const express = require('express');
 const productsModel = require('./models/products.model');
 const productsMiddleware = require('./middlewares/products.middleware');
+const salesModel = require('./models/sales.model');
+const salesMiddleware = require('./middlewares/sales.middleware');
 
 const app = express();
 
@@ -20,8 +22,17 @@ app.post(
   productsMiddleware.verifyNameJsonData,
   async (req, res) => {
     productsModel.createProduct(req, res);
-    // productsModel.sendCreatedProduct(req, res);
   },
+);
+
+app.post(
+  '/sales',
+  salesMiddleware.verifyProductIdExists,
+  salesMiddleware.verifyQuantityExists,
+  salesMiddleware.verifyQuantityValue,
+  salesMiddleware.verifyProductIdExistsOnDb,
+  salesModel.createSaleDate,
+  salesModel.createSaleProduct,
 );
 
 // não remova esse endpoint, é para o avaliador funcionar
