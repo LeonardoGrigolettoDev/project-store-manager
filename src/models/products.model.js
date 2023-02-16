@@ -3,6 +3,7 @@ const connection = require('../db/connection');
 const HTTP_OK_STATUS = 200;
 const HTTP_NOTFOUND_STATUS = 404;
 const HTTP_CREATED_STATUS = 201;
+const HTTP_DELETED_STATUS = 204;
 
 const findAllProducts = async (req, res) => {
   const [result] = await connection.execute(
@@ -62,10 +63,18 @@ const updateProductById = async (req, res) => {
   res.status(HTTP_OK_STATUS).json(resFromDb[0]);
 };
 
+const deleteProductById = async (req, res) => {
+  const { id } = req.params;
+  await connection.execute(
+    `DELETE FROM StoreManager.products WHERE id=${id}`,
+  );
+  res.status(HTTP_DELETED_STATUS).send();
+};
+
 module.exports = {
   findAllProducts,
   findProductById,
   createProduct,
   updateProductById,
-  //   sendCreatedProduct,
+  deleteProductById,
 };

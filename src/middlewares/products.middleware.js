@@ -36,9 +36,8 @@ const verifyProductIdExistsOnDb = async (req, res, next) => {
   if (!idOnDataBase.length > 0) {
     res.status(HTTP_NOT_FOUND_STATUS).json({ message: 'Product not found' });
   } else {
-    next();
+    return next();
   }
-  console.log(idOnDataBase);
 };
 
 module.exports = {
