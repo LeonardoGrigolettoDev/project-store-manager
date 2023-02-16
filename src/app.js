@@ -16,6 +16,9 @@ app.get('/products/:id', async (req, res) => {
   productsModel.findProductById(req, res);
 });
 
+app.get('/sales', salesModel.getAllSales);
+app.get('/sales/:id', salesMiddleware.verifySaleIdExistsOnDb, salesModel.getSaleById);
+
 app.post(
   '/products',
   productsMiddleware.verifyNameJsonExists,

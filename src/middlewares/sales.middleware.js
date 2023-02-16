@@ -44,7 +44,6 @@ const verifyProductIdExistsOnDb = async (req, res, next) => {
     SELECT id FROM StoreManager.products;
   `);
   allIds = allIds[0].map((element) => element.id);
-  console.log(allIds);
   const productIdValues = body.map((element) => element.productId);
   const haveId = productIdValues.map((element) => allIds.includes(element));
   if (haveId.includes(false)) {
@@ -54,9 +53,23 @@ const verifyProductIdExistsOnDb = async (req, res, next) => {
   }
 };
 
+const verifySaleIdExistsOnDb = async (req, res, next) => {
+  const idParam = Number(req.params.id);
+  const resDb = await connection.execute(`
+  SELECT id FROM StoreManager.sales;
+`);
+  let [allIds] = resDb;
+  allIds = allIds.map((element) => element.id);
+  if (allIds.includes(idParam)) {
+    return next();
+  }
+  res.status(HTTP_NOT_FOUND_STATUS).json({ message: 'Sale not found' });
+};
+
 module.exports = {
   verifyProductIdExists,
   verifyQuantityExists,
   verifyQuantityValue,
   verifyProductIdExistsOnDb,
+  verifySaleIdExistsOnDb,
 };

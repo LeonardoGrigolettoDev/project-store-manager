@@ -1,5 +1,7 @@
 const connection = require('../db/connection');
 
+const HTTP_OK_STATUS = 200;
+
 const createSaleDate = async (req, res, next) => {
   await connection.execute(
     `INSERT INTO StoreManager.sales
@@ -29,7 +31,33 @@ const createSaleProduct = async (req, res) => {
   });
 };
 
+const getAllSales = async (req, res) => {
+  const allSales = await connection.execute(`
+  SELECT s.id as saleId, date, product_id as productId, quantity
+  FROM StoreManager.sales as s
+  INNER JOIN StoreManager.sales_products as p
+  ON s.id = p.sale_id
+  `);
+  res.status(HTTP_OK_STATUS).json(allSales[0]);
+};
+
+const getSaleById = async (req, res) => {
+  const saleId = req.params.id;
+  const sales = await connection.execute(
+    `
+    SELECT date, product_id as productId, quantity
+    FROM StoreManager.sales as s
+    INNER JOIN StoreManager.sales_products as p
+    ON s.id = p.sale_id
+    WHERE p.sale_id = ${saleId}
+    `,
+  );
+  res.status(HTTP_OK_STATUS).json(sales[0]);
+};
+
 module.exports = {
   createSaleDate,
   createSaleProduct,
+  getAllSales,
+  getSaleById,
 };
