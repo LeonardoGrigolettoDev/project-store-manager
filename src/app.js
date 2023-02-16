@@ -17,7 +17,11 @@ app.get('/products/:id', async (req, res) => {
 });
 
 app.get('/sales', salesModel.getAllSales);
-app.get('/sales/:id', salesMiddleware.verifySaleIdExistsOnDb, salesModel.getSaleById);
+app.get(
+  '/sales/:id',
+  salesMiddleware.verifySaleIdExistsOnDb,
+  salesModel.getSaleById,
+);
 
 app.post(
   '/products',
@@ -36,6 +40,14 @@ app.post(
   salesMiddleware.verifyProductIdExistsOnDb,
   salesModel.createSaleDate,
   salesModel.createSaleProduct,
+);
+
+app.put(
+  '/products/:id',
+  productsMiddleware.verifyNameJsonExists,
+  productsMiddleware.verifyNameJsonData,
+  productsMiddleware.verifyProductIdExistsOnDb,
+  productsModel.updateProductById,
 );
 
 // não remova esse endpoint, é para o avaliador funcionar

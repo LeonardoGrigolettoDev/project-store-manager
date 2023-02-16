@@ -1,5 +1,8 @@
+const connection = require('../db/connection');
+
 const HTTP_BAD_REQ_STATUS = 400;
 const HTTP_UNPROCES = 422;
+const HTTP_NOT_FOUND_STATUS = 404;
 
 const verifyNameJsonExists = (req, res, next) => {
   const { body } = req;
@@ -23,7 +26,23 @@ const verifyNameJsonData = (req, res, next) => {
   }
 };
 
+const verifyProductIdExistsOnDb = async (req, res, next) => {
+  const { id } = req.params;
+  const [idOnDataBase] = await connection.execute(
+    `
+    SELECT * FROM StoreManager.products WHERE id = ${id};
+    `,
+  );
+  if (!idOnDataBase.length > 0) {
+    res.status(HTTP_NOT_FOUND_STATUS).json({ message: 'Product not found' });
+  } else {
+    next();
+  }
+  console.log(idOnDataBase);
+};
+
 module.exports = {
   verifyNameJsonExists,
   verifyNameJsonData,
+  verifyProductIdExistsOnDb,
 };
