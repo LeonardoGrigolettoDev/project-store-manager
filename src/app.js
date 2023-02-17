@@ -1,5 +1,5 @@
 const express = require('express');
-const productsModel = require('./models/products.model');
+const productsModel = require('./models/products.models');
 const productsMiddleware = require('./middlewares/products.middleware');
 const salesModel = require('./models/sales.model');
 const salesMiddleware = require('./middlewares/sales.middleware');
@@ -8,13 +8,9 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/products', async (req, res) => {
-  productsModel.findAllProducts(req, res);
-});
+app.get('/products', productsModel.findAllProducts);
 
-app.get('/products/:id', async (req, res) => {
-  productsModel.findProductById(req, res);
-});
+app.get('/products/:id', productsModel.findProductById);
 
 app.get('/sales', salesModel.getAllSales);
 app.get(
@@ -27,9 +23,7 @@ app.post(
   '/products',
   productsMiddleware.verifyNameJsonExists,
   productsMiddleware.verifyNameJsonData,
-  async (req, res) => {
-    productsModel.createProduct(req, res);
-  },
+  productsModel.createProduct,
 );
 
 app.post(
@@ -38,7 +32,6 @@ app.post(
   salesMiddleware.verifyQuantityExists,
   salesMiddleware.verifyQuantityValue,
   salesMiddleware.verifyProductIdExistsOnDb,
-  salesModel.createSaleDate,
   salesModel.createSaleProduct,
 );
 
